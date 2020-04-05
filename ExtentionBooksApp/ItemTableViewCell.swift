@@ -9,7 +9,12 @@
 import UIKit
 
 class ItemTableViewCell: UITableViewCell {
-
+    
+    
+    @IBOutlet weak var bookImage: UIImageView!
+    @IBOutlet weak var bookTitleLabel: UILabel!
+    @IBOutlet weak var bookAuthorsLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -19,6 +24,10 @@ class ItemTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    override func prepareForReuse() {
+        bookImage.image = nil
     }
 
 }
