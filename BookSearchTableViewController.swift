@@ -17,6 +17,8 @@ class BookSearchTableViewController: UITableViewController, UISearchBarDelegate 
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tableView.rowHeight = 120
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -68,6 +70,10 @@ class BookSearchTableViewController: UITableViewController, UISearchBarDelegate 
         }
 
     // MARK: - Table view data source
+    
+//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 120
+//    }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -80,12 +86,15 @@ class BookSearchTableViewController: UITableViewController, UISearchBarDelegate 
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "bookCell", for: indexPath) as! ItemTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "bookCell", for: indexPath) as? ItemTableViewCell else {
+            return UITableViewCell()
+        }
         
         let bookData = booksDataArray[indexPath.row]
 
         //本のタイトル設定
         cell.bookTitleLabel.text = bookData.title
+        
         if bookData.authors != nil {
             //作者がいる場合の処理
             let hitAuthors = bookData.authors?.joined(separator: ",")
