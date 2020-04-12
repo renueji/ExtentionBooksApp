@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import CoreLocation
 
 extension MKPlacemark {
     var address: String {
@@ -43,17 +44,66 @@ struct BookStoreMap {
     
 }
 
+
+class GPSSearch: ViewController, CLLocationManagerDelegate {
+    
+    var ido: CLLocationDegrees?
+    var keido: CLLocationDegrees?
+    
+    var locationManager: CLLocationManager!
+    
+    override func viewDidLoad() {
+    super.viewDidLoad()
+        
+        setupLocationManager()
+        
+        print("緯度は\(ido!)です。経度は\(keido!)です")
+        
+    }
+    
+    func setupLocationManager() {
+        locationManager = CLLocationManager()
+        guard let locationManager = locationManager else { return }
+        locationManager.requestWhenInUseAuthorization()
+        
+        let status = CLLocationManager.authorizationStatus()
+        if status == .authorizedWhenInUse {
+            locationManager.delegate = self
+            locationManager.distanceFilter = 10
+            locationManager.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = locations.first
+        let latitude = location?.coordinate.latitude
+        let longitude = location?.coordinate.longitude
+        
+        if let latitude = latitude {
+        ido = latitude
+        } else { print("緯度なし") }
+        
+        if let longitude = longitude {
+        keido = longitude
+        } else { print("経度なし") }
+        
+        print("緯度は\(ido!)です。経度は\(keido!)です")
+    }
+}
+
 class PlaceSearchTableViewController: UITableViewController {
     
     var basho = [String]()
     var jusho = [String]()
+    
+    var gpsData = GPSSearch()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.tableView.rowHeight = 120
     
-        let coordinate = CLLocationCoordinate2DMake(35.6598051, 139.7036661)
+        let coordinate = CLLocationCoordinate2DMake(0.0000000, 0.0000000)
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 1000.0, longitudinalMeters: 1000.0)
         
         BookStoreMap.search(query: "本屋", region: region) { (result) in
@@ -76,6 +126,8 @@ class PlaceSearchTableViewController: UITableViewController {
             }
         }
  }
+    
+    
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
